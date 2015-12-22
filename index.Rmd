@@ -1,0 +1,86 @@
+---
+title: Birth Rates across the US (1990 - 2009)
+subtitle: A Data Visualization Project
+author: Mythreyi S
+framework: io2012
+highlighter: highlight.js
+mode: selfcontained
+
+---
+
+A picture is worth a thousand words
+---
+<style>
+strong {
+  font-weight: bold;
+}
+</style>
+* CDC has published US birth rate data across all the states for the years 1990 - 2009. Below is a sample set of rows and columns from the data frame.
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, results='asis'}
+library(knitr)
+library(lubridate)
+library(plyr)
+library(dplyr)
+library(reshape2)
+options(stringsAsFactors=FALSE)
+birth.rate <- read.csv("birthRate.csv")
+birth.rate <- transform(birth.rate, Year = year(birth.rate$Year))
+kable(head(birth.rate[,1:8], 4))
+```
+
+* It is very tedious to go through the individual states in the table to determine changes in birth rate in the US over the years.
+
+* It is even more difficult to analyze the birth rate trend in all the states in a particular year.
+
+* Just imagine going through the table (again!) to compare the birth rate changes in two or more states!
+
+Here is a solution to the above issues - ***Interactive Data Visualization***.
+
+---
+NVD3 Chart
+---
+* Here is an NVD3 line chart from rCharts package with a sample set of data for 5 states. The user can determine the birth rate changes over the years in individual states and also select/deselect the legends to compare birth rates between two or more states.
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+library(rCharts)
+ b <- melt(birth.rate, variable.name = 'State.Name', value.name = 'Birth.Rate', id = 'Year')
+  b <- transform(b, State = state.abb[match(gsub("\\.", " ", State.Name), state.name)], 
+                 State.Name = gsub("\\.", " ", State.Name), 
+                 fillKey = cut(Birth.Rate, quantile(Birth.Rate, seq(0, 1, 1/4)), 
+                               include.lowest=TRUE, labels = as.character(sort(unique(cut(b$Birth.Rate, quantile(b$Birth.Rate, seq(0, 1, 1/4))))))))
+  b[is.na(b)] <- "DC"
+  
+   n1 <- nPlot(Birth.Rate ~ Year, group =  'State', data = subset(b, State %in% c('AK', 'MA', 'NY', 'UT', 'VT')), type = 'lineChart', dom = 'chart')
+  n1$yAxis(axisLabel = "Birth Rate")
+  n1$xAxis(axisLabel = "Year")
+  n1$show('inline')
+```
+
+---
+US Choropleth
+---
+<style type='text/css'>
+img {
+    max-height: 560px;
+    max-width: 964px;
+}
+</style>
+![width](choropleth.png)
+
+---
+The story behind
+---
+What's life without challenges?
+===
+* Creating the US choropleth had more than its fair share of challenges.
+* It turned out that there are two versions of 'datamaps' library, one in rCharts and the other in rMaps package. 
+* The 'datamaps' library in rCharts seems to be an older version. Using it to show the choropleth in the Shiny server not only masked the labels and legend but also somehow corrupted the nvd3 line chart.
+* It took a lot of iterations to determine that the issue was with the 'datamaps' library version.
+* The issue was resolved in Shiny by explicitly loading the 'datamaps' library from rMaps.
+* To keep it simple in slidify, the choropleth is not displayed from an R code but as an image.
+
+So, what's in the future?
+===
+* Resolve the 'datamaps' library issue and display the choropleth in Slidify using R code.
+* Write a prediction algorithm to predict birth rates in future and include it in Shiny app.
+

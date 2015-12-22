@@ -1,0 +1,9 @@
+base
+knitr
+lubridate
+plyr
+dplyr
+reshape2
+shiny
+slidify
+rCharts

@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Birth Rates across the US (1990 - 2009)</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Birth Rates across the US (1990 - 2009)">
+  <meta name="author" content="Mythreyi S">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="libraries/widgets/nvd3/css/nv.d3.css"></link>
+<link rel=stylesheet href="libraries/widgets/nvd3/css/rNVD3.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  <script src="libraries/widgets/nvd3/js/jquery-1.8.2.min.js"></script>
+<script src="libraries/widgets/nvd3/js/d3.v3.min.js"></script>
+<script src="libraries/widgets/nvd3/js/nv.d3.min-new.js"></script>
+<script src="libraries/widgets/nvd3/js/fisheye.js"></script>
+
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Birth Rates across the US (1990 - 2009)</h1>
+    <h2>A Data Visualization Project</h2>
+    <p>Mythreyi S<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>A picture is worth a thousand words</h2>
+  </hgroup>
+  <article data-timings="">
+    <style>
+strong {
+  font-weight: bold;
+}
+</style>
+
+<ul>
+<li>CDC has published US birth rate data across all the states for the years 1990 - 2009. Below is a sample set of rows and columns from the data frame.</li>
+</ul>
+
+<table><thead>
+<tr>
+<th align="right">Year</th>
+<th align="right">Alabama</th>
+<th align="right">Alaska</th>
+<th align="right">Arizona</th>
+<th align="right">Arkansas</th>
+<th align="right">California</th>
+<th align="right">Colorado</th>
+<th align="right">Connecticut</th>
+</tr>
+</thead><tbody>
+<tr>
+<td align="right">2009</td>
+<td align="right">13.3</td>
+<td align="right">16.2</td>
+<td align="right">14.1</td>
+<td align="right">13.8</td>
+<td align="right">14.3</td>
+<td align="right">13.7</td>
+<td align="right">11.1</td>
+</tr>
+<tr>
+<td align="right">2008</td>
+<td align="right">13.8</td>
+<td align="right">16.7</td>
+<td align="right">15.3</td>
+<td align="right">14.2</td>
+<td align="right">15.0</td>
+<td align="right">14.2</td>
+<td align="right">11.5</td>
+</tr>
+<tr>
+<td align="right">2007</td>
+<td align="right">14.0</td>
+<td align="right">16.2</td>
+<td align="right">16.2</td>
+<td align="right">14.6</td>
+<td align="right">15.5</td>
+<td align="right">14.6</td>
+<td align="right">11.9</td>
+</tr>
+<tr>
+<td align="right">2006</td>
+<td align="right">13.7</td>
+<td align="right">16.4</td>
+<td align="right">16.6</td>
+<td align="right">14.6</td>
+<td align="right">15.4</td>
+<td align="right">14.9</td>
+<td align="right">11.9</td>
+</tr>
+</tbody></table>
+
+<ul>
+<li><p>It is very tedious to go through the individual states in the table to determine changes in birth rate in the US over the years.</p></li>
+<li><p>It is even more difficult to analyze the birth rate trend in all the states in a particular year.</p></li>
+<li><p>Just imagine going through the table (again!) to compare the birth rate changes in two or more states!</p></li>
+</ul>
+
+<p>Here is a solution to the above issues - <strong><em>Interactive Data Visualization</em></strong>.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>NVD3 Chart</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Here is an NVD3 line chart from rCharts package with a sample set of data for 5 states. The user can determine the birth rate changes over the years in individual states and also select/deselect the legends to compare birth rates between two or more states.</li>
+</ul>
+
+<div id = 'chart' class = 'rChart nvd3'></div>
+
+<script type='text/javascript'>
+ $(document).ready(function(){
+      drawchart()
+    });
+    function drawchart(){  
+      var opts = {
+ "dom": "chart",
+"width":    800,
+"height":    400,
+"x": "Year",
+"y": "Birth.Rate",
+"group": "State",
+"type": "lineChart",
+"id": "chart" 
+},
+        data = [
+ {
+ "Year":           2009,
+"State.Name": "Alaska",
+"Birth.Rate":           16.2,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2008,
+"State.Name": "Alaska",
+"Birth.Rate":           16.7,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2007,
+"State.Name": "Alaska",
+"Birth.Rate":           16.2,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2006,
+"State.Name": "Alaska",
+"Birth.Rate":           16.4,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2005,
+"State.Name": "Alaska",
+"Birth.Rate":           15.8,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2004,
+"State.Name": "Alaska",
+"Birth.Rate":           15.8,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2003,
+"State.Name": "Alaska",
+"Birth.Rate":           15.5,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2002,
+"State.Name": "Alaska",
+"Birth.Rate":           15.4,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2001,
+"State.Name": "Alaska",
+"Birth.Rate":           15.8,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2000,
+"State.Name": "Alaska",
+"Birth.Rate":           15.9,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1999,
+"State.Name": "Alaska",
+"Birth.Rate":           15.9,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1998,
+"State.Name": "Alaska",
+"Birth.Rate":             16,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1997,
+"State.Name": "Alaska",
+"Birth.Rate":           16.2,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1996,
+"State.Name": "Alaska",
+"Birth.Rate":           16.5,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1995,
+"State.Name": "Alaska",
+"Birth.Rate":           16.9,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1994,
+"State.Name": "Alaska",
+"Birth.Rate":           17.7,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1993,
+"State.Name": "Alaska",
+"Birth.Rate":           18.5,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1992,
+"State.Name": "Alaska",
+"Birth.Rate":           19.9,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1991,
+"State.Name": "Alaska",
+"Birth.Rate":           20.5,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1990,
+"State.Name": "Alaska",
+"Birth.Rate":           21.6,
+"State": "AK",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2009,
+"State.Name": "Massachusetts",
+"Birth.Rate":           11.4,
+"State": "MA",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2008,
+"State.Name": "Massachusetts",
+"Birth.Rate":           11.9,
+"State": "MA",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2007,
+"State.Name": "Massachusetts",
+"Birth.Rate":           12.1,
+"State": "MA",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2006,
+"State.Name": "Massachusetts",
+"Birth.Rate":           12.1,
+"State": "MA",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2005,
+"State.Name": "Massachusetts",
+"Birth.Rate":             12,
+"State": "MA",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2004,
+"State.Name": "Massachusetts",
+"Birth.Rate":           12.2,
+"State": "MA",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2003,
+"State.Name": "Massachusetts",
+"Birth.Rate":           12.5,
+"State": "MA",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2002,
+"State.Name": "Massachusetts",
+"Birth.Rate":           12.5,
+"State": "MA",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2001,
+"State.Name": "Massachusetts",
+"Birth.Rate":           12.7,
+"State": "MA",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2000,
+"State.Name": "Massachusetts",
+"Birth.Rate":           12.9,
+"State": "MA",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           1999,
+"State.Name": "Massachusetts",
+"Birth.Rate":           12.8,
+"State": "MA",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           1998,
+"State.Name": "Massachusetts",
+"Birth.Rate":             13,
+"State": "MA",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           1997,
+"State.Name": "Massachusetts",
+"Birth.Rate":           12.9,
+"State": "MA",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           1996,
+"State.Name": "Massachusetts",
+"Birth.Rate":             13,
+"State": "MA",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           1995,
+"State.Name": "Massachusetts",
+"Birth.Rate":           13.3,
+"State": "MA",
+"fillKey": "(13.2,14]" 
+},
+{
+ "Year":           1994,
+"State.Name": "Massachusetts",
+"Birth.Rate":           13.7,
+"State": "MA",
+"fillKey": "(13.2,14]" 
+},
+{
+ "Year":           1993,
+"State.Name": "Massachusetts",
+"Birth.Rate":             14,
+"State": "MA",
+"fillKey": "(13.2,14]" 
+},
+{
+ "Year":           1992,
+"State.Name": "Massachusetts",
+"Birth.Rate":           14.5,
+"State": "MA",
+"fillKey": "(14,15.1]" 
+},
+{
+ "Year":           1991,
+"State.Name": "Massachusetts",
+"Birth.Rate":           14.7,
+"State": "MA",
+"fillKey": "(14,15.1]" 
+},
+{
+ "Year":           1990,
+"State.Name": "Massachusetts",
+"Birth.Rate":           15.4,
+"State": "MA",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2009,
+"State.Name": "New York",
+"Birth.Rate":           12.7,
+"State": "NY",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2008,
+"State.Name": "New York",
+"Birth.Rate":           12.8,
+"State": "NY",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2007,
+"State.Name": "New York",
+"Birth.Rate":           13.1,
+"State": "NY",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2006,
+"State.Name": "New York",
+"Birth.Rate":             13,
+"State": "NY",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2005,
+"State.Name": "New York",
+"Birth.Rate":           12.8,
+"State": "NY",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2004,
+"State.Name": "New York",
+"Birth.Rate":             13,
+"State": "NY",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2003,
+"State.Name": "New York",
+"Birth.Rate":           13.2,
+"State": "NY",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2002,
+"State.Name": "New York",
+"Birth.Rate":           13.1,
+"State": "NY",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2001,
+"State.Name": "New York",
+"Birth.Rate":           13.3,
+"State": "NY",
+"fillKey": "(13.2,14]" 
+},
+{
+ "Year":           2000,
+"State.Name": "New York",
+"Birth.Rate":           13.6,
+"State": "NY",
+"fillKey": "(13.2,14]" 
+},
+{
+ "Year":           1999,
+"State.Name": "New York",
+"Birth.Rate":           13.5,
+"State": "NY",
+"fillKey": "(13.2,14]" 
+},
+{
+ "Year":           1998,
+"State.Name": "New York",
+"Birth.Rate":           13.8,
+"State": "NY",
+"fillKey": "(13.2,14]" 
+},
+{
+ "Year":           1997,
+"State.Name": "New York",
+"Birth.Rate":           13.8,
+"State": "NY",
+"fillKey": "(13.2,14]" 
+},
+{
+ "Year":           1996,
+"State.Name": "New York",
+"Birth.Rate":           14.2,
+"State": "NY",
+"fillKey": "(14,15.1]" 
+},
+{
+ "Year":           1995,
+"State.Name": "New York",
+"Birth.Rate":           14.6,
+"State": "NY",
+"fillKey": "(14,15.1]" 
+},
+{
+ "Year":           1994,
+"State.Name": "New York",
+"Birth.Rate":           15.1,
+"State": "NY",
+"fillKey": "(14,15.1]" 
+},
+{
+ "Year":           1993,
+"State.Name": "New York",
+"Birth.Rate":           15.4,
+"State": "NY",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1992,
+"State.Name": "New York",
+"Birth.Rate":           15.8,
+"State": "NY",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1991,
+"State.Name": "New York",
+"Birth.Rate":           16.1,
+"State": "NY",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1990,
+"State.Name": "New York",
+"Birth.Rate":           16.5,
+"State": "NY",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2009,
+"State.Name": "Utah",
+"Birth.Rate":           19.4,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2008,
+"State.Name": "Utah",
+"Birth.Rate":           20.3,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2007,
+"State.Name": "Utah",
+"Birth.Rate":           20.8,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2006,
+"State.Name": "Utah",
+"Birth.Rate":             21,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2005,
+"State.Name": "Utah",
+"Birth.Rate":           20.9,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2004,
+"State.Name": "Utah",
+"Birth.Rate":           21.2,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2003,
+"State.Name": "Utah",
+"Birth.Rate":           21.2,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2002,
+"State.Name": "Utah",
+"Birth.Rate":           21.2,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2001,
+"State.Name": "Utah",
+"Birth.Rate":             21,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2000,
+"State.Name": "Utah",
+"Birth.Rate":           21.2,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1999,
+"State.Name": "Utah",
+"Birth.Rate":             21,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1998,
+"State.Name": "Utah",
+"Birth.Rate":           20.9,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1997,
+"State.Name": "Utah",
+"Birth.Rate":           20.3,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1996,
+"State.Name": "Utah",
+"Birth.Rate":           20.4,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1995,
+"State.Name": "Utah",
+"Birth.Rate":           19.6,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1994,
+"State.Name": "Utah",
+"Birth.Rate":           19.5,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1993,
+"State.Name": "Utah",
+"Birth.Rate":           19.6,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1992,
+"State.Name": "Utah",
+"Birth.Rate":           20.3,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1991,
+"State.Name": "Utah",
+"Birth.Rate":           20.2,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           1990,
+"State.Name": "Utah",
+"Birth.Rate":           21.1,
+"State": "UT",
+"fillKey": "(15.1,21.6]" 
+},
+{
+ "Year":           2009,
+"State.Name": "Vermont",
+"Birth.Rate":            9.8,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2008,
+"State.Name": "Vermont",
+"Birth.Rate":           10.2,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2007,
+"State.Name": "Vermont",
+"Birth.Rate":           10.5,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2006,
+"State.Name": "Vermont",
+"Birth.Rate":           10.4,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2005,
+"State.Name": "Vermont",
+"Birth.Rate":           10.1,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2004,
+"State.Name": "Vermont",
+"Birth.Rate":           10.6,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2003,
+"State.Name": "Vermont",
+"Birth.Rate":           10.6,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2002,
+"State.Name": "Vermont",
+"Birth.Rate":           10.4,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2001,
+"State.Name": "Vermont",
+"Birth.Rate":           10.4,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           2000,
+"State.Name": "Vermont",
+"Birth.Rate":           10.7,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           1999,
+"State.Name": "Vermont",
+"Birth.Rate":           10.9,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           1998,
+"State.Name": "Vermont",
+"Birth.Rate":             11,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           1997,
+"State.Name": "Vermont",
+"Birth.Rate":           11.1,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           1996,
+"State.Name": "Vermont",
+"Birth.Rate":           11.4,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           1995,
+"State.Name": "Vermont",
+"Birth.Rate":           11.5,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           1994,
+"State.Name": "Vermont",
+"Birth.Rate":           12.6,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           1993,
+"State.Name": "Vermont",
+"Birth.Rate":           12.9,
+"State": "VT",
+"fillKey": "(9.8,13.2]" 
+},
+{
+ "Year":           1992,
+"State.Name": "Vermont",
+"Birth.Rate":           13.5,
+"State": "VT",
+"fillKey": "(13.2,14]" 
+},
+{
+ "Year":           1991,
+"State.Name": "Vermont",
+"Birth.Rate":             14,
+"State": "VT",
+"fillKey": "(13.2,14]" 
+},
+{
+ "Year":           1990,
+"State.Name": "Vermont",
+"Birth.Rate":           14.7,
+"State": "VT",
+"fillKey": "(14,15.1]" 
+} 
+]
+  
+      if(!(opts.type==="pieChart" || opts.type==="sparklinePlus" || opts.type==="bulletChart")) {
+        var data = d3.nest()
+          .key(function(d){
+            //return opts.group === undefined ? 'main' : d[opts.group]
+            //instead of main would think a better default is opts.x
+            return opts.group === undefined ? opts.y : d[opts.group];
+          })
+          .entries(data);
+      }
+      
+      if (opts.disabled != undefined){
+        data.map(function(d, i){
+          d.disabled = opts.disabled[i]
+        })
+      }
+      
+      nv.addGraph(function() {
+        var chart = nv.models[opts.type]()
+          .width(opts.width)
+          .height(opts.height)
+          
+        if (opts.type != "bulletChart"){
+          chart
+            .x(function(d) { return d[opts.x] })
+            .y(function(d) { return d[opts.y] })
+        }
+          
+         
+        
+          
+        chart.xAxis
+  .axisLabel("Year")
+
+        
+        
+        chart.yAxis
+  .axisLabel("Birth Rate")
+      
+       d3.select("#" + opts.id)
+        .append('svg')
+        .datum(data)
+        .transition().duration(500)
+        .call(chart);
+
+       nv.utils.windowResize(chart.update);
+       return chart;
+      });
+    };
+</script>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>US Choropleth</h2>
+  </hgroup>
+  <article data-timings="">
+    <style type='text/css'>
+img {
+    max-height: 560px;
+    max-width: 964px;
+}
+</style>
+
+<p><img src="choropleth.png" alt="width"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>The story behind</h2>
+  </hgroup>
+  <article data-timings="">
+    <h1>What&#39;s life without challenges?</h1>
+
+<ul>
+<li>Creating the US choropleth had more than its fair share of challenges.</li>
+<li>It turned out that there are two versions of &#39;datamaps&#39; library, one in rCharts and the other in rMaps package. </li>
+<li>The &#39;datamaps&#39; library in rCharts seems to be an older version. Using it to show the choropleth in the Shiny server not only masked the labels and legend but also somehow corrupted the nvd3 line chart.</li>
+<li>It took a lot of iterations to determine that the issue was with the &#39;datamaps&#39; library version.</li>
+<li>The issue was resolved in Shiny by explicitly loading the &#39;datamaps&#39; library from rMaps.</li>
+<li>To keep it simple in slidify, the choropleth is not displayed from an R code but as an image.</li>
+</ul>
+
+<h1>So, what&#39;s in the future?</h1>
+
+<ul>
+<li>Resolve the &#39;datamaps&#39; library issue and display the choropleth in Slidify using R code.</li>
+<li>Write a prediction algorithm to predict birth rates in future and include it in Shiny app.</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='A picture is worth a thousand words'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='NVD3 Chart'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='US Choropleth'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='The story behind'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
